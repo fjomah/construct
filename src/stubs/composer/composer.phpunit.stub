@@ -1,0 +1,29 @@
+{
+    "name": "{vendor_lower}/{project_lower}",
+    "description": "PHP project.",
+    "keywords": [{keywords}],
+    "license": "{license}",
+    "authors": [
+        {
+            "name": "{author_name}",
+            "email": "{author_email}"
+        }
+    ],
+    "require": {
+        "php": ">={php_version}"
+    },
+    "autoload": {
+        "psr-4": {
+            "{namespace}\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "{namespace}\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "config": {
+        "sort-packages": true
+    }
+}

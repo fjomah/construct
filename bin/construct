@@ -1,0 +1,47 @@
+#!/usr/bin/env php
+
+<?php
+
+$autoloaded = false;
+$autoloads = [
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../vendor/autoload.php',
+];
+
+foreach ($autoloads as $autoload) {
+    if (file_exists($autoload)) {
+        require $autoload;
+        $autoloaded = true;
+        break;
+    }
+}
+
+if (false === $autoloaded) {
+   echo('You need to set up the project dependencies by running the following command:' . PHP_EOL .
+       '> composer install' . PHP_EOL);
+   exit(1);
+}
+
+use Construct\Commands\ConstructCommand;
+use Construct\Commands\InteractiveCommand;
+use Construct\Construct;
+use League\Container\Container;
+use Symfony\Component\Console\Application;
+
+$container = new Container();
+$container->add('Construct\Helpers\Filesystem')->withArgument('Construct\Defaults');
+$container->add('Construct\Helpers\Git');
+$container->add('Construct\Helpers\Script')->withArgument('Construct\Helpers\Str');
+$container->add('Construct\Helpers\Str');
+$container->add('Construct\Helpers\Travis')->withArgument('Construct\Helpers\Str');
+$container->add('Construct\Configuration')->withArgument('Construct\Helpers\Filesystem');
+$container->add('Construct\Defaults');
+$container->share('Construct\Settings');
+$container->share('Construct\GitAttributes');
+$container->share('Construct\Composer');
+
+$construct = new Construct($container);
+$app = new Application('Construct', '2.0.0');
+$app->add(new ConstructCommand($construct));
+$app->add(new InteractiveCommand($construct));
+$app->run();
